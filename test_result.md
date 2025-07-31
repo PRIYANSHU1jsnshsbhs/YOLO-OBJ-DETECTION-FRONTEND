@@ -170,13 +170,16 @@ frontend:
     implemented: true
     working: false
     file: "frontend/src/pages/Home.jsx"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: true  
     status_history:
         -working: false
         -agent: "main"
         -comment: "Fixed full screen visibility issues: increased hero section top padding from pt-16 to pt-24, made buttons responsive with better spacing, reduced 3D scene height to avoid scroll indicator overlap, improved text sizing for mobile, added z-index to scroll indicator."
+        -working: false
+        -agent: "main"
+        -comment: "ADDITIONAL FIX: User reported buttons still cut off and scroll/3D overlap. Applied more spacing fixes: changed section to min-h-screen with pb-24, increased button bottom padding to pb-12/pb-16, reduced 3D scene height further (h-64 to h-[450px]), moved scroll indicator to bottom-16/bottom-20, increased z-index to z-30, reduced main title size to prevent overflow."
 
 metadata:
   created_by: "main_agent"

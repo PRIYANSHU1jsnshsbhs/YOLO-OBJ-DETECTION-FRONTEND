@@ -1,13 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Upload, Camera, ArrowDown, Zap, Shield, Brain, Rocket } from 'lucide-react';
+import { Upload, Camera, ArrowDown, Zap, Shield, Brain, Rocket, Activity, Target, Scan } from 'lucide-react';
 import Scene3D from '../components/Scene3D';
 
 const Home = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [glitchActive, setGlitchActive] = useState(false);
 
   useEffect(() => {
     setIsVisible(true);
+    
+    // Mouse tracking for parallax effects
+    const handleMouseMove = (e) => {
+      setMousePosition({
+        x: (e.clientX / window.innerWidth) * 2 - 1,
+        y: (e.clientY / window.innerHeight) * 2 - 1
+      });
+    };
+
+    // Periodic glitch effect
+    const glitchInterval = setInterval(() => {
+      setGlitchActive(true);
+      setTimeout(() => setGlitchActive(false), 200);
+    }, 8000);
+
+    window.addEventListener('mousemove', handleMouseMove);
+    
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      clearInterval(glitchInterval);
+    };
   }, []);
 
   const scrollToDetection = () => {
@@ -16,107 +39,163 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
-      {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden pt-16">
-        {/* Animated Background */}
-        <div className="absolute inset-0">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-purple-500/5 rounded-full blur-3xl animate-pulse delay-2000"></div>
+    <div className="min-h-screen bg-black relative overflow-hidden">
+      {/* Advanced Background Effects */}
+      <div className="fixed inset-0 pointer-events-none">
+        {/* Hexagonal Grid Pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="hexagonal-grid"></div>
+        </div>
+        
+        {/* Matrix Particles */}
+        <div className="matrix-bg">
+          {Array.from({ length: 50 }).map((_, i) => (
+            <div 
+              key={i}
+              className="matrix-particle"
+              style={{
+                left: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 5}s`,
+                animationDuration: `${3 + Math.random() * 4}s`
+              }}
+            />
+          ))}
         </div>
 
+        {/* Scanning Lines */}
+        <div className="scan-lines">
+          <div className="scan-line scan-line-1"></div>
+          <div className="scan-line scan-line-2"></div>
+          <div className="scan-line scan-line-3"></div>
+        </div>
+
+        {/* Neural Network Background */}
+        <div className="neural-network">
+          {Array.from({ length: 30 }).map((_, i) => (
+            <div 
+              key={i}
+              className="neural-node"
+              style={{
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 3}s`
+              }}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Hero Section */}
+      <section className="relative h-screen flex items-center justify-center overflow-hidden pt-16">
         <div className="relative z-10 max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          
           {/* Left Side - Content */}
           <div className={`transform transition-all duration-1000 ${isVisible ? 'translate-x-0 opacity-100' : '-translate-x-20 opacity-0'}`}>
             <div className="space-y-8">
-              {/* Badge */}
-              <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/20 backdrop-blur-sm">
-                <Zap className="w-4 h-4 text-cyan-400 mr-2" />
-                <span className="text-cyan-300 text-sm font-medium">AI-Powered Space Safety</span>
+              
+              {/* Terminal Badge */}
+              <div className="inline-flex items-center px-6 py-3 bg-gray-900/50 border border-gray-800 backdrop-blur-xl rounded-xl font-mono text-sm">
+                <div className="w-2 h-2 bg-green-400 rounded-full mr-3 animate-pulse"></div>
+                <span className="text-green-400">$ ./initialize_detection_system.sh</span>
               </div>
 
-              {/* Main Headlines */}
-              <div className="space-y-4">
-                <h1 className="text-6xl lg:text-8xl font-black leading-tight">
-                  <span className="block bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent animate-pulse">
-                    Spot.
+              {/* Main Headlines with Advanced Typography */}
+              <div className="space-y-2">
+                <h1 className={`text-6xl lg:text-8xl font-black leading-tight transition-all duration-500 ${glitchActive ? 'glitch-text' : ''}`}>
+                  <span className="block text-white tracking-tighter font-mono">
+                    DETECT
                   </span>
-                  <span className="block bg-gradient-to-r from-blue-500 via-purple-600 to-pink-500 bg-clip-text text-transparent animate-pulse delay-300">
-                    Detect.
+                  <span className="block bg-gradient-to-r from-gray-400 via-gray-200 to-gray-400 bg-clip-text text-transparent tracking-tighter font-mono">
+                    ANALYZE
                   </span>
-                  <span className="block bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 bg-clip-text text-transparent animate-pulse delay-500">
-                    Protect.
+                  <span className="block text-gray-500 tracking-tighter font-mono">
+                    SECURE
                   </span>
                 </h1>
               </div>
 
               {/* Subtitle */}
-              <p className="text-xl lg:text-2xl text-gray-300 leading-relaxed max-w-2xl">
-                AI-powered detection of critical space station gear. 
-                <span className="text-cyan-400 font-semibold"> Real-time identification</span> of 
-                fire extinguishers, oxygen tanks, and emergency toolkits.
-              </p>
+              <div className="relative">
+                <p className="text-xl lg:text-2xl text-gray-400 leading-relaxed max-w-2xl font-mono">
+                  <span className="text-gray-200">Advanced AI detection</span> for critical space station equipment.
+                  <br />
+                  <span className="text-white font-semibold">Real-time identification</span> powered by neural networks.
+                </p>
+                
+                {/* Typing Cursor Effect */}
+                <div className="absolute -right-2 top-0 w-0.5 h-8 bg-white animate-pulse"></div>
+              </div>
 
-              {/* Feature Pills */}
+              {/* Tech Specs Pills */}
               <div className="flex flex-wrap gap-3">
                 {[
-                  { icon: Shield, text: 'YOLOv8 Powered', color: 'from-green-500 to-emerald-500' },
-                  { icon: Brain, text: 'Real-time AI', color: 'from-blue-500 to-cyan-500' },
-                  { icon: Rocket, text: 'Space Optimized', color: 'from-purple-500 to-pink-500' }
+                  { icon: Activity, text: 'Neural Engine', color: 'border-gray-700 text-gray-300' },
+                  { icon: Target, text: '99.2% Accuracy', color: 'border-gray-700 text-gray-300' },
+                  { icon: Scan, text: 'Real-time Scan', color: 'border-gray-700 text-gray-300' }
                 ].map((feature, index) => (
-                  <div key={index} className={`inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r ${feature.color}/10 border border-current/20 backdrop-blur-sm`}>
+                  <div key={index} className={`inline-flex items-center px-4 py-2 bg-gray-900/30 border ${feature.color} backdrop-blur-sm rounded-lg font-mono text-sm hover:bg-gray-800/50 transition-all duration-300`}>
                     <feature.icon className="w-4 h-4 mr-2" />
-                    <span className="text-sm font-medium">{feature.text}</span>
+                    <span>{feature.text}</span>
                   </div>
                 ))}
               </div>
 
-              {/* CTA Buttons */}
+              {/* CTA Buttons - Less Colorful, More Industrial */}
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 <Link
                   to="/detection"
-                  className="group inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-lg rounded-2xl shadow-2xl shadow-cyan-500/25 transform transition-all duration-300 hover:scale-105 hover:shadow-cyan-500/40"
+                  className="group relative inline-flex items-center justify-center px-8 py-4 bg-white text-black font-bold text-lg rounded-none border-2 border-white hover:bg-black hover:text-white transition-all duration-300 overflow-hidden"
                 >
-                  <Upload className="w-6 h-6 mr-3 transform transition-transform duration-300 group-hover:scale-125 group-hover:-translate-y-1" />
-                  Upload Image for Detection
+                  <div className="absolute inset-0 bg-gray-900 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></div>
+                  <Upload className="w-6 h-6 mr-3 relative z-10 transform transition-transform duration-300 group-hover:scale-110" />
+                  <span className="relative z-10 font-mono">UPLOAD_IMAGE</span>
                 </Link>
                 
                 <Link
                   to="/detection?mode=camera"
-                  className="group inline-flex items-center justify-center px-8 py-4 bg-black/20 hover:bg-black/30 border-2 border-gray-600 hover:border-gray-400 text-white font-bold text-lg rounded-2xl backdrop-blur-sm transform transition-all duration-300 hover:scale-105"
+                  className="group relative inline-flex items-center justify-center px-8 py-4 bg-transparent border-2 border-gray-700 text-gray-300 font-bold text-lg rounded-none hover:border-white hover:text-white transition-all duration-300"
                 >
-                  <Camera className="w-6 h-6 mr-3 transform transition-transform duration-300 group-hover:scale-125 group-hover:rotate-12" />
-                  Capture from Camera
+                  <Camera className="w-6 h-6 mr-3 transform transition-transform duration-300 group-hover:rotate-12" />
+                  <span className="font-mono">CAMERA_CAPTURE</span>
                 </Link>
               </div>
             </div>
           </div>
 
-          {/* Right Side - 3D Scene */}
+          {/* Right Side - Enhanced 3D Scene */}
           <div className={`relative h-96 lg:h-[600px] transform transition-all duration-1000 delay-300 ${isVisible ? 'translate-x-0 opacity-100' : 'translate-x-20 opacity-0'}`}>
-            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 to-blue-500/5 rounded-3xl backdrop-blur-sm border border-white/10">
+            <div className="absolute inset-0 bg-gray-900/10 backdrop-blur-sm border border-gray-800 rounded-none">
               <Scene3D />
-            </div>
-            
-            {/* Floating Labels */}
-            <div className="absolute top-4 left-4 px-3 py-2 bg-black/50 backdrop-blur-sm rounded-lg border border-cyan-500/30 text-cyan-300 text-sm font-medium">
-              Interactive 3D Models
-            </div>
-            <div className="absolute bottom-4 right-4 px-3 py-2 bg-black/50 backdrop-blur-sm rounded-lg border border-blue-500/30 text-blue-300 text-sm font-medium">
-              Click & Drag to Explore
+              
+              {/* HUD Overlay */}
+              <div className="absolute inset-0 pointer-events-none">
+                {/* Corner Brackets */}
+                <div className="absolute top-4 left-4 w-8 h-8 border-l-2 border-t-2 border-gray-500"></div>
+                <div className="absolute top-4 right-4 w-8 h-8 border-r-2 border-t-2 border-gray-500"></div>
+                <div className="absolute bottom-4 left-4 w-8 h-8 border-l-2 border-b-2 border-gray-500"></div>
+                <div className="absolute bottom-4 right-4 w-8 h-8 border-r-2 border-b-2 border-gray-500"></div>
+                
+                {/* Status Indicators */}
+                <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-black/70 backdrop-blur-sm px-4 py-2 border border-gray-700 font-mono text-xs text-green-400">
+                  [SCANNING] NEURAL_NET_ACTIVE
+                </div>
+                
+                <div className="absolute bottom-4 right-16 bg-black/70 backdrop-blur-sm px-3 py-2 border border-gray-700 font-mono text-xs text-gray-400">
+                  3D_INTERACTIVE_MODE
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Scroll Indicator */}
+        {/* Enhanced Scroll Indicator */}
         <div 
           onClick={scrollToDetection}
           className="absolute bottom-8 left-1/2 transform -translate-x-1/2 cursor-pointer group"
         >
-          <div className="flex flex-col items-center space-y-2 text-gray-400 hover:text-white transition-colors duration-300">
-            <span className="text-sm font-medium">Explore Detection</span>
-            <div className="w-8 h-12 border-2 border-current rounded-full flex justify-center">
+          <div className="flex flex-col items-center space-y-2 text-gray-600 hover:text-gray-300 transition-colors duration-300">
+            <span className="text-sm font-mono">[SCROLL_DOWN]</span>
+            <div className="w-8 h-12 border border-current rounded-none flex justify-center">
               <ArrowDown className="w-4 h-4 mt-2 animate-bounce" />
             </div>
           </div>
@@ -124,50 +203,52 @@ const Home = () => {
       </section>
 
       {/* Detection Preview Section */}
-      <section id="detection-preview" className="py-20 px-6">
+      <section id="detection-preview" className="py-20 px-6 relative">
         <div className="max-w-6xl mx-auto">
+          
           <div className="text-center mb-16">
-            <h2 className="text-4xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-              Advanced Detection System
+            <h2 className="text-4xl lg:text-6xl font-bold mb-6 text-white font-mono tracking-tight">
+              DETECTION_SYSTEM.EXE
             </h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Our YOLOv8-powered system identifies critical safety equipment in space environments with 
-              <span className="text-cyan-400 font-semibold"> real-time precision</span>.
+            <p className="text-xl text-gray-400 max-w-3xl mx-auto font-mono">
+              Neural network powered identification system for critical space safety equipment.
+              <br />
+              <span className="text-gray-200">Real-time analysis</span> with advanced computer vision.
             </p>
           </div>
 
-          {/* Features Grid */}
+          {/* Features Grid - Minimalistic */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
             {[
               {
                 icon: Shield,
-                title: 'Fire Extinguisher Detection',
-                description: 'Instantly identify fire safety equipment with precise bounding box localization and confidence scoring.',
-                color: 'from-red-500 to-orange-500'
+                title: 'FIRE_EXTINGUISHER',
+                description: 'Neural identification of fire safety systems with precise coordinate mapping and confidence scoring.',
+                gradient: 'from-gray-800 to-gray-900'
               },
               {
                 icon: Brain,
-                title: 'Oxygen Tank Recognition',
-                description: 'Detect life-support oxygen cylinders with advanced computer vision and machine learning algorithms.',
-                color: 'from-green-500 to-emerald-500'
+                title: 'OXYGEN_SYSTEMS',
+                description: 'Advanced detection of life-support oxygen distribution systems using deep learning algorithms.',
+                gradient: 'from-gray-800 to-gray-900'
               },
               {
                 icon: Rocket,
-                title: 'Emergency Toolkit Scanning',
-                description: 'Locate essential emergency toolkits and maintenance equipment for mission-critical operations.',
-                color: 'from-blue-500 to-cyan-500'
+                title: 'EMERGENCY_TOOLKIT',
+                description: 'Real-time scanning for critical maintenance and emergency response equipment.',
+                gradient: 'from-gray-800 to-gray-900'
               }
             ].map((feature, index) => (
-              <div key={index} className="group relative p-8 bg-black/20 backdrop-blur-sm border border-white/10 rounded-3xl hover:bg-black/30 hover:border-white/20 transition-all duration-500 transform hover:scale-105 hover:-translate-y-2">
-                <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl"></div>
+              <div key={index} className="group relative bg-gray-900/20 backdrop-blur-sm border border-gray-800 p-8 hover:bg-gray-800/30 hover:border-gray-600 transition-all duration-500 transform hover:scale-105">
+                <div className="absolute inset-0 bg-gradient-to-br from-transparent via-gray-800/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 <div className="relative z-10">
-                  <div className={`w-16 h-16 bg-gradient-to-r ${feature.color} rounded-2xl flex items-center justify-center mb-6 transform transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 shadow-2xl`}>
-                    <feature.icon className="w-8 h-8 text-white" />
+                  <div className="w-16 h-16 bg-gray-800 border border-gray-700 flex items-center justify-center mb-6 transform transition-all duration-500 group-hover:scale-110">
+                    <feature.icon className="w-8 h-8 text-gray-300" />
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-4 group-hover:text-cyan-300 transition-colors duration-300">
+                  <h3 className="text-xl font-bold text-white mb-4 group-hover:text-gray-200 transition-colors duration-300 font-mono">
                     {feature.title}
                   </h3>
-                  <p className="text-gray-300 leading-relaxed group-hover:text-gray-200 transition-colors duration-300">
+                  <p className="text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors duration-300 font-mono text-sm">
                     {feature.description}
                   </p>
                 </div>
@@ -179,10 +260,10 @@ const Home = () => {
           <div className="text-center">
             <Link
               to="/detection"
-              className="inline-flex items-center px-12 py-6 bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 hover:from-cyan-400 hover:via-blue-500 hover:to-purple-500 text-white font-bold text-xl rounded-2xl shadow-2xl shadow-cyan-500/25 transform transition-all duration-300 hover:scale-105 hover:shadow-cyan-500/40"
+              className="inline-flex items-center px-12 py-6 bg-white text-black font-bold text-xl rounded-none hover:bg-gray-200 transition-all duration-300 transform hover:scale-105 font-mono"
             >
-              <Zap className="w-6 h-6 mr-3 animate-pulse" />
-              Start Detection Now
+              <Zap className="w-6 h-6 mr-3" />
+              INITIALIZE_SCAN
             </Link>
           </div>
         </div>

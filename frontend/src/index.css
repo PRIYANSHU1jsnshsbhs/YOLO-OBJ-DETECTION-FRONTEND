@@ -14,6 +14,7 @@ body {
     -moz-osx-font-smoothing: grayscale;
     font-family: 'Inter', sans-serif;
     background: #000;
+    overflow-x: hidden;
 }
 
 code {
@@ -83,6 +84,217 @@ code {
   body {
     @apply bg-background text-foreground;
     }
+}
+
+/* Advanced Hexagonal Grid Pattern */
+.hexagonal-grid {
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 60px 60px;
+  background-position: 0 0, 30px 30px;
+  animation: hex-drift 20s linear infinite;
+}
+
+@keyframes hex-drift {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(60px, 60px); }
+}
+
+/* Matrix Background Effect */
+.matrix-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.matrix-particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  animation: matrix-fall linear infinite;
+}
+
+@keyframes matrix-fall {
+  0% {
+    transform: translateY(-100vh);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
+
+/* Scanning Lines Effect */
+.scan-lines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.scan-line {
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  animation: scan-move linear infinite;
+}
+
+.scan-line-1 {
+  animation-duration: 8s;
+  animation-delay: 0s;
+}
+
+.scan-line-2 {
+  animation-duration: 12s;
+  animation-delay: 2s;
+}
+
+.scan-line-3 {
+  animation-duration: 10s;
+  animation-delay: 4s;
+}
+
+@keyframes scan-move {
+  0% {
+    top: -2px;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+/* Neural Network Effect */
+.neural-network {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.neural-node {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  animation: neural-pulse 3s ease-in-out infinite;
+}
+
+.neural-node::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: 24px;
+  height: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 50%;
+  animation: neural-expand 3s ease-in-out infinite;
+}
+
+@keyframes neural-pulse {
+  0%, 100% {
+    opacity: 0.1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.3;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes neural-expand {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.1;
+  }
+  50% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* Glitch Text Effect */
+.glitch-text {
+  position: relative;
+  animation: glitch-skew 0.2s linear;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.glitch-text::before {
+  color: rgba(255, 0, 0, 0.8);
+  animation: glitch-1 0.2s linear;
+  z-index: -1;
+}
+
+.glitch-text::after {
+  color: rgba(0, 255, 255, 0.8);
+  animation: glitch-2 0.2s linear;
+  z-index: -2;
+}
+
+@keyframes glitch-skew {
+  0% { transform: skew(0deg); }
+  20% { transform: skew(-2deg); }
+  40% { transform: skew(1deg); }
+  60% { transform: skew(-1deg); }
+  80% { transform: skew(0.5deg); }
+  100% { transform: skew(0deg); }
+}
+
+@keyframes glitch-1 {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+@keyframes glitch-2 {
+  0% { transform: translate(0); }
+  20% { transform: translate(2px, -2px); }
+  40% { transform: translate(2px, 2px); }
+  60% { transform: translate(-2px, -2px); }
+  80% { transform: translate(-2px, 2px); }
+  100% { transform: translate(0); }
 }
 
 /* Advanced Animations */
@@ -167,6 +379,19 @@ code {
   }
 }
 
+/* Enhanced Data Flow Animation */
+@keyframes data-flow {
+  0% {
+    transform: translateX(-100%) scaleX(0);
+  }
+  50% {
+    transform: translateX(0%) scaleX(1);
+  }
+  100% {
+    transform: translateX(100%) scaleX(0);
+  }
+}
+
 .animate-float {
   animation: float 6s ease-in-out infinite;
 }
@@ -196,6 +421,10 @@ code {
   animation: glow 2s ease-in-out infinite alternate;
 }
 
+.animate-data-flow {
+  animation: data-flow 2s linear infinite;
+}
+
 /* Smooth transitions for all interactive elements */
 * {
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
@@ -205,22 +434,20 @@ code {
 
 /* Enhanced scrollbar */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
   background: rgba(0, 0, 0, 0.3);
-  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, rgba(6, 182, 212, 0.6), rgba(147, 51, 234, 0.6));
-  border-radius: 10px;
-  border: 2px solid rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, rgba(6, 182, 212, 0.8), rgba(147, 51, 234, 0.8));
+  background: rgba(255, 255, 255, 0.3);
 }
 
 /* Ultra smooth scroll */
@@ -230,9 +457,8 @@ html {
 
 /* Enhanced text selection */
 ::selection {
-  background: rgba(6, 182, 212, 0.3);
+  background: rgba(255, 255, 255, 0.2);
   color: white;
-  text-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
 }
 
 /* Custom cursor effects */
@@ -251,7 +477,7 @@ html {
 
 /* Custom gradients */
 .bg-glass {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -272,9 +498,9 @@ html {
 /* Button hover effects */
 .btn-glow:hover {
   box-shadow: 
-    0 0 20px rgba(6, 182, 212, 0.4),
-    0 0 40px rgba(6, 182, 212, 0.3),
-    0 0 60px rgba(6, 182, 212, 0.2);
+    0 0 20px rgba(255, 255, 255, 0.4),
+    0 0 40px rgba(255, 255, 255, 0.3),
+    0 0 60px rgba(255, 255, 255, 0.2);
 }
 
 /* Card hover effects */
@@ -282,7 +508,7 @@ html {
   transform: translateY(-10px) scale(1.02);
   box-shadow: 
     0 20px 40px rgba(0, 0, 0, 0.3),
-    0 0 40px rgba(6, 182, 212, 0.1);
+    0 0 40px rgba(255, 255, 255, 0.1);
 }
 
 /* Loading animations */

@@ -154,24 +154,47 @@ frontend:
         -agent: "main"
         -comment: "Updated browserslist database to latest version to resolve outdated browser data warnings"
 
+  - task: "About page theme consistency"
+    implemented: true
+    working: false
+    file: "frontend/src/pages/About.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        -working: false
+        -agent: "main"
+        -comment: "Updated About page to match minimalistic dark theme from Home/Detection pages. Replaced colorful gradients with monochromatic styling, updated fonts to monospace, made elements industrial/terminal style."
+
+  - task: "Home page visibility issues"
+    implemented: true
+    working: false
+    file: "frontend/src/pages/Home.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true  
+    status_history:
+        -working: false
+        -agent: "main"
+        -comment: "Fixed full screen visibility issues: increased hero section top padding from pt-16 to pt-24, made buttons responsive with better spacing, reduced 3D scene height to avoid scroll indicator overlap, improved text sizing for mobile, added z-index to scroll indicator."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
-  test_sequence: 1
+  test_sequence: 2
   run_ui: false
 
 test_plan:
   current_focus:
-    - "Enhanced Dark Theme Implementation"
-    - "Killer Animations System"
-    - "Modern Techy Elements"
+    - "About page theme consistency"
+    - "Home page visibility fixes"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
 agent_communication:
     -agent: "main"
-    -message: "Fixed all dependency issues - OpenCV for backend, babel plugin for frontend. Backend fully tested and working. Ready to proceed with UI enhancements."
+    -message: "Fixed About page theme to match minimalistic dark design and resolved Home page fullscreen visibility issues including header overlap, button visibility, and 3D scene positioning conflicts."
 
 user_problem_statement: "Test the Eleven11 Space Safety Detection API backend thoroughly. Verify API Health & Status, Image Detection Endpoint, Error Handling, Mock Detection System, and File Processing pipeline."
 

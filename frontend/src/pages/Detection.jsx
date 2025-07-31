@@ -1,5 +1,5 @@
-import React, { useState, useRef, useCallback } from 'react';
-import { Upload, Camera, X, Download, AlertCircle, CheckCircle, Loader2, ZoomIn } from 'lucide-react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { Upload, Camera, X, Download, AlertCircle, CheckCircle, Loader2, ZoomIn, Activity, Terminal, Scan } from 'lucide-react';
 import Webcam from 'react-webcam';
 
 const Detection = () => {
@@ -9,12 +9,31 @@ const Detection = () => {
   const [showCamera, setShowCamera] = useState(false);
   const [error, setError] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [scanProgress, setScanProgress] = useState(0);
+  const [systemStatus, setSystemStatus] = useState('READY');
   
   const fileInputRef = useRef(null);
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
 
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+
+  useEffect(() => {
+    // Simulate system initialization
+    const initSequence = ['INITIALIZING', 'LOADING_MODELS', 'CALIBRATING', 'READY'];
+    let currentStep = 0;
+    
+    const initInterval = setInterval(() => {
+      if (currentStep < initSequence.length - 1) {
+        currentStep++;
+        setSystemStatus(initSequence[currentStep]);
+      } else {
+        clearInterval(initInterval);
+      }
+    }, 800);
+
+    return () => clearInterval(initInterval);
+  }, []);
 
   // Handle file upload
   const handleFileUpload = (event) => {
@@ -28,6 +47,7 @@ const Detection = () => {
       reader.readAsDataURL(file);
       setError(null);
       setDetectionResults(null);
+      setSystemStatus('FILE_LOADED');
     }
   };
 
@@ -45,6 +65,7 @@ const Detection = () => {
           setShowCamera(false);
           setError(null);
           setDetectionResults(null);
+          setSystemStatus('CAPTURE_COMPLETE');
         });
     }
   }, [webcamRef]);
@@ -58,6 +79,19 @@ const Detection = () => {
 
     setIsLoading(true);
     setError(null);
+    setSystemStatus('ANALYZING');
+    setScanProgress(0);
+
+    // Simulate scan progress
+    const progressInterval = setInterval(() => {
+      setScanProgress(prev => {
+        if (prev >= 95) {
+          clearInterval(progressInterval);
+          return prev;
+        }
+        return prev + Math.random() * 10;
+      });
+    }, 100);
 
     try {
       const formData = new FormData();
@@ -74,6 +108,8 @@ const Detection = () => {
 
       const results = await response.json();
       setDetectionResults(results);
+      setScanProgress(100);
+      setSystemStatus('ANALYSIS_COMPLETE');
       
       // Draw bounding boxes on canvas
       if (results.detections && results.detections.length > 0) {
@@ -82,9 +118,11 @@ const Detection = () => {
       
     } catch (err) {
       setError(err.message);
+      setSystemStatus('ERROR');
       console.error('Detection error:', err);
     } finally {
       setIsLoading(false);
+      clearInterval(progressInterval);
     }
   };
 
@@ -106,42 +144,31 @@ const Detection = () => {
         const { bbox, class_name, confidence } = detection;
         const [x, y, width, height] = bbox;
         
-        // Set box style
-        ctx.strokeStyle = getColorForClass(class_name);
-        ctx.lineWidth = 3;
-        ctx.fillStyle = getColorForClass(class_name, 0.2);
+        // Set box style - minimalistic white/gray
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
         
         // Draw bounding box
         ctx.strokeRect(x, y, width, height);
         ctx.fillRect(x, y, width, height);
         
         // Draw label background
-        const label = `${class_name} ${(confidence * 100).toFixed(1)}%`;
-        ctx.font = '16px Inter, sans-serif';
+        const label = `${class_name.toUpperCase()} ${(confidence * 100).toFixed(1)}%`;
+        ctx.font = '14px JetBrains Mono, monospace';
         const textMetrics = ctx.measureText(label);
-        const labelHeight = 24;
+        const labelHeight = 20;
         
-        ctx.fillStyle = getColorForClass(class_name);
+        ctx.fillStyle = '#000000';
         ctx.fillRect(x, y - labelHeight, textMetrics.width + 10, labelHeight);
         
         // Draw label text
-        ctx.fillStyle = 'white';
-        ctx.fillText(label, x + 5, y - 8);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText(label, x + 5, y - 6);
       });
     };
     
     img.src = imagePreview;
-  };
-
-  // Get color for each class
-  const getColorForClass = (className, alpha = 1) => {
-    const colors = {
-      'fire_extinguisher': `rgba(239, 68, 68, ${alpha})`, // red
-      'oxygen_tank': `rgba(34, 197, 94, ${alpha})`, // green
-      'toolkit': `rgba(59, 130, 246, ${alpha})`, // blue
-      'default': `rgba(168, 85, 247, ${alpha})` // purple
-    };
-    return colors[className?.toLowerCase()] || colors.default;
   };
 
   // Reset all states
@@ -151,6 +178,8 @@ const Detection = () => {
     setDetectionResults(null);
     setError(null);
     setShowCamera(false);
+    setScanProgress(0);
+    setSystemStatus('READY');
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -171,35 +200,54 @@ const Detection = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 pt-20 pb-12">
-      <div className="max-w-7xl mx-auto px-6">
+    <div className="min-h-screen bg-black pt-20 pb-12 relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="hexagonal-grid opacity-5"></div>
+        <div className="scan-lines">
+          <div className="scan-line scan-line-1"></div>
+          <div className="scan-line scan-line-2"></div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl lg:text-7xl font-black mb-6 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent">
-            Space Gear Detection
+          <h1 className="text-5xl lg:text-7xl font-black mb-6 text-white font-mono tracking-tight">
+            DETECTION_TERMINAL
           </h1>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Upload an image or capture from camera to detect critical space station safety equipment
+          <p className="text-xl text-gray-400 max-w-3xl mx-auto font-mono">
+            Neural network analysis for critical space station safety equipment identification
           </p>
+          
+          {/* System Status */}
+          <div className="mt-8 inline-flex items-center px-6 py-3 bg-gray-900/50 border border-gray-700 backdrop-blur-xl font-mono text-sm">
+            <div className={`w-2 h-2 rounded-full mr-3 ${systemStatus === 'ERROR' ? 'bg-red-400' : 'bg-green-400'} animate-pulse`}></div>
+            <span className="text-gray-300">SYSTEM_STATUS: </span>
+            <span className="text-white ml-2">{systemStatus}</span>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Input Section */}
           <div className="lg:col-span-1 space-y-6">
-            <div className="bg-black/20 backdrop-blur-sm border border-white/10 rounded-3xl p-6">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
-                <Upload className="w-6 h-6 mr-3 text-cyan-400" />
-                Image Input
+            <div className="bg-gray-900/20 backdrop-blur-sm border border-gray-800 p-6">
+              <h2 className="text-2xl font-bold text-white mb-6 flex items-center font-mono">
+                <Terminal className="w-6 h-6 mr-3 text-gray-400" />
+                INPUT_MODULE
               </h2>
 
-              {/* Upload Button */}
+              {/* Upload Button - Less Colorful, Industrial */}
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full mb-4 p-6 border-2 border-dashed border-cyan-500/30 hover:border-cyan-500/50 rounded-2xl bg-cyan-500/5 hover:bg-cyan-500/10 transition-all duration-300 group cursor-pointer"
+                className="w-full mb-4 p-6 border border-gray-700 hover:border-gray-500 bg-gray-900/30 hover:bg-gray-800/50 transition-all duration-300 group cursor-pointer relative overflow-hidden"
               >
-                <Upload className="w-12 h-12 mx-auto mb-4 text-cyan-400 group-hover:scale-110 transition-transform duration-300" />
-                <p className="text-white font-semibold mb-2">Upload Image</p>
-                <p className="text-gray-400 text-sm">Click to select or drag & drop</p>
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-700/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                <div className="relative z-10">
+                  <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400 group-hover:text-white transition-colors duration-300" />
+                  <p className="text-white font-semibold mb-2 font-mono">UPLOAD_IMAGE</p>
+                  <p className="text-gray-500 text-sm font-mono">SELECT FILE OR DRAG & DROP</p>
+                </div>
               </button>
               
               <input
@@ -210,74 +258,98 @@ const Detection = () => {
                 className="hidden"
               />
 
-              {/* Camera Button */}
+              {/* Camera Button - Less Colorful, Industrial */}
               <button
                 onClick={() => setShowCamera(!showCamera)}
-                className="w-full mb-6 p-6 bg-gradient-to-r from-purple-500/20 to-pink-500/20 hover:from-purple-500/30 hover:to-pink-500/30 border border-purple-500/30 hover:border-purple-500/50 rounded-2xl transition-all duration-300 group"
+                className="w-full mb-6 p-6 bg-gray-900/30 hover:bg-gray-800/50 border border-gray-700 hover:border-gray-500 transition-all duration-300 group relative overflow-hidden"
               >
-                <Camera className="w-12 h-12 mx-auto mb-4 text-purple-400 group-hover:scale-110 transition-transform duration-300" />
-                <p className="text-white font-semibold mb-2">Use Camera</p>
-                <p className="text-gray-400 text-sm">Capture live image</p>
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-700/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                <div className="relative z-10">
+                  <Camera className="w-12 h-12 mx-auto mb-4 text-gray-400 group-hover:text-white transition-colors duration-300" />
+                  <p className="text-white font-semibold mb-2 font-mono">CAMERA_MODULE</p>
+                  <p className="text-gray-500 text-sm font-mono">CAPTURE LIVE IMAGE</p>
+                </div>
               </button>
 
-              {/* Detection Button */}
+              {/* Detection Button - Minimalistic */}
               <button
                 onClick={performDetection}
                 disabled={!selectedImage || isLoading}
-                className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 disabled:from-gray-600 disabled:to-gray-700 text-white font-bold py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 disabled:scale-100 disabled:cursor-not-allowed flex items-center justify-center"
+                className="w-full bg-white text-black hover:bg-gray-200 disabled:bg-gray-700 disabled:text-gray-500 font-bold py-4 px-6 transition-all duration-300 transform hover:scale-105 disabled:scale-100 disabled:cursor-not-allowed flex items-center justify-center font-mono relative overflow-hidden group"
               >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                    Detecting...
-                  </>
-                ) : (
-                  <>
-                    <ZoomIn className="w-5 h-5 mr-2" />
-                    Start Detection
-                  </>
+                {!isLoading && (
+                  <div className="absolute inset-0 bg-black transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></div>
                 )}
+                <div className="relative z-10 flex items-center">
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                      ANALYZING...
+                    </>
+                  ) : (
+                    <>
+                      <Scan className="w-5 h-5 mr-2 group-hover:text-white transition-colors" />
+                      <span className="group-hover:text-white transition-colors">INITIALIZE_SCAN</span>
+                    </>
+                  )}
+                </div>
               </button>
+
+              {/* Progress Bar */}
+              {isLoading && (
+                <div className="mt-4">
+                  <div className="flex justify-between mb-2 font-mono text-sm">
+                    <span className="text-gray-400">PROGRESS</span>
+                    <span className="text-white">{Math.round(scanProgress)}%</span>
+                  </div>
+                  <div className="w-full bg-gray-800 h-2">
+                    <div 
+                      className="bg-white h-2 transition-all duration-200"
+                      style={{ width: `${scanProgress}%` }}
+                    ></div>
+                  </div>
+                </div>
+              )}
 
               {/* Reset Button */}
               {(selectedImage || detectionResults) && (
                 <button
                   onClick={resetDetection}
-                  className="w-full mt-4 bg-gray-600 hover:bg-gray-500 text-white font-semibold py-3 px-6 rounded-2xl transition-all duration-300 flex items-center justify-center"
+                  className="w-full mt-4 bg-gray-800 hover:bg-gray-700 text-white font-semibold py-3 px-6 transition-all duration-300 flex items-center justify-center font-mono"
                 >
                   <X className="w-5 h-5 mr-2" />
-                  Reset
+                  RESET_SYSTEM
                 </button>
               )}
             </div>
 
             {/* Results Summary */}
             {detectionResults && (
-              <div className="bg-black/20 backdrop-blur-sm border border-white/10 rounded-3xl p-6">
+              <div className="bg-gray-900/20 backdrop-blur-sm border border-gray-800 p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-bold text-white flex items-center">
+                  <h3 className="text-xl font-bold text-white flex items-center font-mono">
                     <CheckCircle className="w-5 h-5 mr-2 text-green-400" />
-                    Detection Results
+                    ANALYSIS_RESULTS
                   </h3>
                   <button
                     onClick={downloadResults}
-                    className="p-2 bg-gray-600 hover:bg-gray-500 rounded-lg transition-colors duration-200"
+                    className="p-2 bg-gray-800 hover:bg-gray-700 transition-colors duration-200"
                     title="Download Results"
                   >
                     <Download className="w-4 h-4 text-white" />
                   </button>
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-3 font-mono text-sm">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-300">Total Detections:</span>
+                    <span className="text-gray-400">DETECTIONS:</span>
                     <span className="text-white font-semibold">
                       {detectionResults.detections?.length || 0}
                     </span>
                   </div>
                   
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-300">Processing Time:</span>
+                    <span className="text-gray-400">PROCESS_TIME:</span>
                     <span className="text-white font-semibold">
                       {detectionResults.processing_time || 'N/A'}
                     </span>
@@ -285,10 +357,10 @@ const Detection = () => {
 
                   {/* Detection List */}
                   {detectionResults.detections?.map((detection, index) => (
-                    <div key={index} className="p-3 bg-white/5 rounded-lg border-l-4" style={{ borderLeftColor: getColorForClass(detection.class_name) }}>
+                    <div key={index} className="p-3 bg-gray-800/50 border-l-2 border-white">
                       <div className="flex justify-between items-center">
-                        <span className="text-white font-medium">{detection.class_name}</span>
-                        <span className="text-cyan-400 font-semibold">
+                        <span className="text-white font-medium font-mono">{detection.class_name.toUpperCase()}</span>
+                        <span className="text-gray-300 font-semibold">
                           {(detection.confidence * 100).toFixed(1)}%
                         </span>
                       </div>
@@ -301,8 +373,8 @@ const Detection = () => {
 
           {/* Display Section */}
           <div className="lg:col-span-2">
-            <div className="bg-black/20 backdrop-blur-sm border border-white/10 rounded-3xl p-6 h-full">
-              <h2 className="text-2xl font-bold text-white mb-6">Analysis View</h2>
+            <div className="bg-gray-900/20 backdrop-blur-sm border border-gray-800 p-6 h-full">
+              <h2 className="text-2xl font-bold text-white mb-6 font-mono">ANALYSIS_VIEWPORT</h2>
 
               {/* Camera View */}
               {showCamera && (
@@ -310,7 +382,7 @@ const Detection = () => {
                   <Webcam
                     ref={webcamRef}
                     screenshotFormat="image/jpeg"
-                    className="w-full rounded-2xl"
+                    className="w-full"
                     videoConstraints={{
                       width: 1280,
                       height: 720,
@@ -320,31 +392,45 @@ const Detection = () => {
                   <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-4">
                     <button
                       onClick={captureImage}
-                      className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold py-3 px-6 rounded-full transition-all duration-300 transform hover:scale-105"
+                      className="bg-white text-black hover:bg-gray-200 font-bold py-3 px-6 transition-all duration-300 transform hover:scale-105 font-mono"
                     >
                       <Camera className="w-5 h-5 mr-2 inline" />
-                      Capture
+                      CAPTURE
                     </button>
                     <button
                       onClick={() => setShowCamera(false)}
-                      className="bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 px-6 rounded-full transition-all duration-300"
+                      className="bg-gray-800 hover:bg-gray-700 text-white font-bold py-3 px-6 transition-all duration-300 font-mono"
                     >
                       <X className="w-5 h-5 mr-2 inline" />
-                      Close
+                      CLOSE
                     </button>
                   </div>
                 </div>
               )}
 
               {/* Image Display */}
-              <div className="relative bg-gray-800/50 rounded-2xl border-2 border-dashed border-gray-600/50 min-h-96 flex items-center justify-center">
+              <div className="relative bg-gray-900/50 border border-gray-700 min-h-96 flex items-center justify-center overflow-hidden">
                 {imagePreview ? (
                   <div className="relative w-full">
+                    {/* HUD Overlay */}
+                    <div className="absolute inset-0 pointer-events-none z-10">
+                      {/* Corner Brackets */}
+                      <div className="absolute top-4 left-4 w-8 h-8 border-l-2 border-t-2 border-white"></div>
+                      <div className="absolute top-4 right-4 w-8 h-8 border-r-2 border-t-2 border-white"></div>
+                      <div className="absolute bottom-4 left-4 w-8 h-8 border-l-2 border-b-2 border-white"></div>
+                      <div className="absolute bottom-4 right-4 w-8 h-8 border-r-2 border-b-2 border-white"></div>
+                      
+                      {/* Status Indicator */}
+                      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-black/70 backdrop-blur-sm px-4 py-2 border border-gray-600 font-mono text-xs text-green-400">
+                        [ACTIVE] NEURAL_ANALYSIS_MODE
+                      </div>
+                    </div>
+                    
                     {/* Original Image */}
                     <img
                       src={imagePreview}
                       alt="Selected"
-                      className="w-full max-h-96 object-contain rounded-2xl"
+                      className="w-full max-h-96 object-contain"
                       style={{ display: detectionResults ? 'none' : 'block' }}
                     />
                     
@@ -352,35 +438,35 @@ const Detection = () => {
                     {detectionResults && (
                       <canvas
                         ref={canvasRef}
-                        className="w-full max-h-96 object-contain rounded-2xl"
+                        className="w-full max-h-96 object-contain"
                         style={{ maxWidth: '100%', height: 'auto' }}
                       />
                     )}
                   </div>
                 ) : (
                   <div className="text-center">
-                    <Upload className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-                    <p className="text-gray-400 text-lg font-medium">No image selected</p>
-                    <p className="text-gray-500 text-sm">Upload an image or capture from camera to begin detection</p>
+                    <Upload className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                    <p className="text-gray-500 text-lg font-medium font-mono">NO_IMAGE_LOADED</p>
+                    <p className="text-gray-600 text-sm font-mono">UPLOAD FILE OR CAPTURE FROM CAMERA</p>
                   </div>
                 )}
               </div>
 
               {/* Error Display */}
               {error && (
-                <div className="mt-4 p-4 bg-red-500/10 border border-red-500/30 text-red-400 rounded-2xl flex items-center">
+                <div className="mt-4 p-4 bg-red-900/20 border border-red-800 text-red-400 flex items-center font-mono">
                   <AlertCircle className="w-5 h-5 mr-3 flex-shrink-0" />
-                  <span>{error}</span>
+                  <span>ERROR: {error}</span>
                 </div>
               )}
 
               {/* Loading Overlay */}
               {isLoading && (
-                <div className="absolute inset-0 bg-black/50 backdrop-blur-sm rounded-3xl flex items-center justify-center">
+                <div className="absolute inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center">
                   <div className="text-center">
-                    <Loader2 className="w-12 h-12 text-cyan-400 animate-spin mx-auto mb-4" />
-                    <p className="text-white text-lg font-semibold">Processing Image...</p>
-                    <p className="text-gray-400">This may take a few seconds</p>
+                    <Activity className="w-12 h-12 text-white animate-pulse mx-auto mb-4" />
+                    <p className="text-white text-lg font-semibold font-mono">PROCESSING_IMAGE...</p>
+                    <p className="text-gray-400 font-mono">NEURAL_NETWORK_ACTIVE</p>
                   </div>
                 </div>
               )}

@@ -1,65 +1,61 @@
 import React from 'react';
-import { Github, ExternalLink, Users, Code, Brain, Rocket, Shield, Zap } from 'lucide-react';
+import { Github, ExternalLink, Users, Code, Brain, Rocket, Shield, Zap, Terminal } from 'lucide-react';
 
 const About = () => {
   const teamMembers = [
     {
-      name: 'AI Research Team',
-      role: 'Machine Learning Engineers',
+      name: 'AI_RESEARCH_TEAM',
+      role: 'MACHINE_LEARNING_ENGINEERS',
       description: 'Specialized in computer vision and object detection algorithms'
     },
     {
-      name: 'Space Systems Team',
-      role: 'Aerospace Engineers',
+      name: 'SPACE_SYSTEMS_TEAM',
+      role: 'AEROSPACE_ENGINEERS',
       description: 'Expert knowledge in space station operations and safety protocols'
     },
     {
-      name: 'Software Development Team',
-      role: 'Full Stack Developers',
+      name: 'SOFTWARE_DEV_TEAM',
+      role: 'FULL_STACK_DEVELOPERS',
       description: 'Building robust, scalable web applications for mission-critical systems'
     }
   ];
 
   const techStack = [
     {
-      category: 'Frontend',
+      category: 'FRONTEND',
       technologies: ['React.js', 'Three.js', 'TailwindCSS', 'React Router'],
-      icon: Code,
-      color: 'from-blue-500 to-cyan-500'
+      icon: Code
     },
     {
-      category: 'Backend',
+      category: 'BACKEND',
       technologies: ['Flask', 'Python', 'FastAPI', 'OpenCV'],
-      icon: Brain,
-      color: 'from-green-500 to-emerald-500'
+      icon: Brain
     },
     {
       category: 'AI/ML',
       technologies: ['YOLOv8', 'PyTorch', 'Computer Vision', 'Object Detection'],
-      icon: Zap,
-      color: 'from-purple-500 to-pink-500'
+      icon: Zap
     },
     {
-      category: 'Infrastructure',
+      category: 'INFRASTRUCTURE',
       technologies: ['Docker', 'MongoDB', 'REST APIs', 'WebRTC'],
-      icon: Shield,
-      color: 'from-orange-500 to-red-500'
+      icon: Shield
     }
   ];
 
   const projectFeatures = [
     {
-      title: 'Real-time Detection',
+      title: 'REAL_TIME_DETECTION',
       description: 'Advanced YOLOv8 model processes images in real-time with high accuracy for space station environments.',
       icon: Rocket
     },
     {
-      title: 'Interactive 3D Models',
+      title: 'INTERACTIVE_3D_MODELS',
       description: 'Immersive 3D visualization of space equipment using Three.js and WebGL for enhanced user experience.',
       icon: Code
     },
     {
-      title: 'Mission-Critical Safety',
+      title: 'MISSION_CRITICAL_SAFETY',
       description: 'Designed specifically for space station safety protocols, ensuring astronaut protection and mission success.',
       icon: Shield
     }

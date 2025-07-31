@@ -13,7 +13,7 @@ from PIL import Image
 import numpy as np
 
 # Get backend URL from environment
-BACKEND_URL = "https://8457d050-18b8-465a-9796-fde3302d1846.preview.emergentagent.com/api"
+BACKEND_URL = "https://760af87b-6614-45f9-a27d-7a84efac691e.preview.emergentagent.com/api"
 
 class BackendTester:
     def __init__(self):

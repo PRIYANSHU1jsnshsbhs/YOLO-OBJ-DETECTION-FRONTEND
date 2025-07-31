@@ -86,7 +86,7 @@ const Home = () => {
       </div>
 
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden pt-24">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-24 pb-24">
         <div className="relative z-10 max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           
           {/* Left Side - Content */}
@@ -101,7 +101,7 @@ const Home = () => {
 
               {/* Main Headlines with Advanced Typography */}
               <div className="space-y-1 lg:space-y-2">
-                <h1 className={`text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-black leading-tight transition-all duration-500 ${glitchActive ? 'glitch-text' : ''}`}>
+                <h1 className={`text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black leading-tight transition-all duration-500 ${glitchActive ? 'glitch-text' : ''}`}>
                   <span className="block text-white tracking-tighter font-mono">
                     DETECT
                   </span>
@@ -140,8 +140,8 @@ const Home = () => {
                 ))}
               </div>
 
-              {/* CTA Buttons - Fixed visibility and responsive spacing */}
-              <div className="flex flex-col sm:flex-row gap-3 lg:gap-4 pt-4 pb-4 lg:pb-8">
+              {/* CTA Buttons - Much more space to ensure full visibility */}
+              <div className="flex flex-col sm:flex-row gap-3 lg:gap-4 pt-4 pb-12 lg:pb-16">
                 <Link
                   to="/detection"
                   className="group relative inline-flex items-center justify-center px-6 lg:px-8 py-3 lg:py-4 bg-white text-black font-bold text-base lg:text-lg rounded-none border-2 border-white hover:bg-black hover:text-white transition-all duration-300 overflow-hidden"
@@ -162,8 +162,8 @@ const Home = () => {
             </div>
           </div>
 
-          {/* Right Side - Enhanced 3D Scene - Better sizing to avoid scroll overlap */}
-          <div className={`relative h-80 lg:h-[500px] xl:h-[550px] transform transition-all duration-1000 delay-300 ${isVisible ? 'translate-x-0 opacity-100' : 'translate-x-20 opacity-0'}`}>
+          {/* Right Side - Enhanced 3D Scene - Smaller height to avoid scroll overlap */}
+          <div className={`relative h-64 sm:h-80 lg:h-[400px] xl:h-[450px] transform transition-all duration-1000 delay-300 ${isVisible ? 'translate-x-0 opacity-100' : 'translate-x-20 opacity-0'}`}>
             <div className="absolute inset-0 bg-gray-900/10 backdrop-blur-sm border border-gray-800 rounded-none">
               <Scene3D />
               
@@ -188,10 +188,10 @@ const Home = () => {
           </div>
         </div>
 
-        {/* Enhanced Scroll Indicator - Better positioning to avoid 3D scene overlap */}
+        {/* Enhanced Scroll Indicator - Much more space from bottom to avoid overlap */}
         <div 
           onClick={scrollToDetection}
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 cursor-pointer group z-20"
+          className="absolute bottom-16 lg:bottom-20 left-1/2 transform -translate-x-1/2 cursor-pointer group z-30"
         >
           <div className="flex flex-col items-center space-y-2 text-gray-600 hover:text-gray-300 transition-colors duration-300">
             <span className="text-sm font-mono">[SCROLL_DOWN]</span>
